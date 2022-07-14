@@ -1,0 +1,16 @@
+Đây là bài luyện tập SQL Injection
+
+Mục đích của bài luyện tập là tấn công tiêm nhiễm SQL UNION.
+Để tấn công tiêm nhiêm SQL UNION, bài luyện tập hướng attacker cách đọc nội dung từ một table khác, cụ thể ở đây là table users các trường username và password.
+
+Dựa vào 2 bài trước là dò số cột và dò kiểu dữ liệu, ta áp dụng vào bài này dò được có 2 cột đều là dạng text, từ đó ta sẽ tiêm vào SQL để dò username và password (2 cột này đều dạng text)
+
+URL category của bài lab: https://0a6800be03a2f137c0912fad00ca00cb.web-security-academy.net/filter?category=Gifts
+
+URL tiêm nhiễm: https://0a6800be03a2f137c0912fad00ca00cb.web-security-academy.net/filter?category=Gifts' UNION SELECT username,password FROM users--
+
+khi này SQL Query sẽ như sau: 
+
+SELECT text1,text2 FROM product WHERE category = 'Gifts' UNION SELECT username,password FROM users--'
+
+Kết quả trả về là thông tin username và password của bảng users đã bị leak, ta dùng thông tin đó để đăng nhập.
