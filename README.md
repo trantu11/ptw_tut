@@ -1,1 +1,1 @@
-# ptw_tut
+# Đây là repo lưu lại quá trình học pentest web của cá nhân tôi
